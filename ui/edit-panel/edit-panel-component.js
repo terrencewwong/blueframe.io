@@ -22,6 +22,9 @@ const Form = ({ children }) => {
   )
 }
 
+const Code = styled.code`
+  white-space: pre;
+`
 const SourceCode = ({ component }) => {
   const { displayName, props } = component
 
@@ -34,7 +37,7 @@ const SourceCode = ({ component }) => {
   ${props.children}
 </${displayName}>`
 
-  return <pre>{tag}</pre>
+  return <Code>{tag}</Code>
 }
 
 const PropsPanel = ({ component, onPropChange }) => {
@@ -91,7 +94,9 @@ export default class EditPanelComponent extends Component {
       <Container size='fill' bg='#f1f1f1'>
         <Split>
           <Split.Content>
-            <SourceCode component={component} />
+            <Container top={7} left={8} right={3}>
+              <SourceCode component={component} />
+            </Container>
           </Split.Content>
           <Split.Panel
             position='bottom'
