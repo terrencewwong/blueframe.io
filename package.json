@@ -1,0 +1,24 @@
+{
+  "name": "blueframe.io",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Terrence Wong <wongterrencew@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^3.0.3",
+    "next-redux-wrapper": "^1.3.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.2.0",
+    "styled-components": "^2.1.2",
+    "styled-conditional-include": "^1.0.1"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  }
+}
