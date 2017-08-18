@@ -3,12 +3,23 @@ import styled from 'styled-components'
 import { Container, Distribute, Split } from '../../blueframe/layouts'
 import { Checkbox, Input, Select, Spacer, Text } from '../../blueframe/atoms'
 
+// TODO: cleanup this hack
+const VerticalCenter = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+`
+
 const Form = ({ children }) => {
   const labeledChildren = children.map(child => {
     const { label } = child.props
     return (
       <Split>
-        <Split.Content>{label}</Split.Content>
+        <Split.Content>
+          <VerticalCenter>
+            {label}
+          </VerticalCenter>
+        </Split.Content>
         <Split.Panel position='right' width='50%'>
           {child}
         </Split.Panel>
