@@ -1,94 +1,67 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import {
-  Button,
-  Spacer,
-  StyleCascader,
-  Text
-} from '../../blueframe/atoms'
 
-const Flex = styled.div`
-  display: flex;
-  align-items: center;
+const MAX_LINE_LENGTH = 44
+
+const Code = styled.code`
+  font-size: 13px;
+  white-space: pre;
 `
 
-const Highlightable = styled.div`
-  :hover {
-    background-color: #f1f4fd;
-  }
-`
+const hasChildren = children => children instanceof Array && children.length
+const calculateIndentation = depth =>
+  Array.from(Array(depth)).map(() => '  ').join('')
 
-const openTag = component => {
-  return `<${component}>`
+const SourceTree = ({ id, components, depth }) => {
+  const { displayName, props, propTypes } = components[id]
+  const { children, ...rest } = props
+  const propsCode = Object.keys(rest)
+    .map(prop => {
+      switch (propTypes[prop]) {
+        case 'boolean':
+          return props[prop] ? prop : ''
+
+        case 'number':
+          return `${prop}={${props[prop]}}`
+
+        default:
+          return `${prop}='${props[prop]}'`
+      }
+    })
+
+  const indentation = calculateIndentation(depth)
+
+  let openTag = indentation + (
+    propsCode.length
+      ? `<${displayName} ${propsCode.join(' ')}>`
+      : `<${displayName}>`
+  )
+
+  console.log(openTag.length)
+  if (openTag.length > MAX_LINE_LENGTH) {
+    const indentedProps = propsCode.map(prop => '  ' + prop)
+
+    openTag = [`<${displayName}`, ...indentedProps, '/>']
+      .map(line => indentation + line)
+      .join('\n')
+  }
+
+  const closeTag = indentation + `</${displayName}>`
+
+  if (hasChildren(children)) {
+    const sourceChildren = children.map(child => SourceTree({ id: child, components, depth: depth + 1 }))
+    return [openTag, sourceChildren, closeTag].join('\n')
+  }
+
+  return [openTag, '  ' + indentation + props.children, closeTag].join('\n')
 }
 
-const closeTag = component => {
-  return `</${component}>`
-}
+export default ({ components }) => {
+  const sourceTree = SourceTree({
+    id: 'root',
+    components,
+    depth: 0
+  })
 
-class _SourceCode extends Component {
-  state = {
-    shouldShowActions: false
-  }
-
-  toggleShouldShowActions = () => {
-    this.setState({ shouldShowActions: !this.state.shouldShowActions })
-  }
-
-  renderFirstLine () {
-    const { id, component, setCurrentComponent } = this.props
-    const { shouldShowActions } = this.state
-//    const shouldShowActions = true
-
-    const text = (
-      <Text
-        size='sizen1'
-        tag='pre'
-        monospace
-        inline={shouldShowActions}
-      >
-        {openTag(component)}
-      </Text>
-    )
-
-    return shouldShowActions ? (
-      <Flex>
-        {text}
-        <Spacer left={1}>
-          <Button small onClick={() => setCurrentComponent(id)}>✎</Button>
-        </Spacer>
-        <Spacer left={1}>
-          <Button small warning>X</Button>
-        </Spacer>
-      </Flex>
-    ) : text
-  }
-
-  render () {
-    const { component, children } = this.props
-
-    return (
-      <StyleCascader font-size='13px' line-height='20px'>
-        <Highlightable
-          onMouseEnter={this.toggleShouldShowActions}
-          onMouseLeave={this.toggleShouldShowActions}
-        >
-          {this.renderFirstLine()}
-          <Text tag='pre' monospace>{'  ' + children}</Text>
-          <Text tag='pre' monospace>{closeTag(component)}</Text>
-        </Highlightable>
-      </StyleCascader>
-    )
-  }
-}
-
-export default ({ componentMap, setCurrentComponent }) => {
-  const { component, children } = componentMap.root
-
-  return <_SourceCode
-    id='root'
-    component={component}
-    children={children}
-    setCurrentComponent={setCurrentComponent}
-  />
+  return <Code>{sourceTree}</Code>
 }

@@ -5,27 +5,44 @@ import Preview from '../preview'
 
 export default class SandboxComponent extends Component {
   state = {
-    component: {
-      displayName: 'Text',
-      props: {
-        children: 'Hello, world!',
-        size: 'size0'
+    components: {
+      root: {
+        displayName: 'Distribute',
+        props: {
+          children: ['component1'],
+          align: 'center',
+          space: 2,
+          vertical: true
+        },
+        propTypes: {
+          children: 'array',
+          align: ['start', 'center', 'end'],
+          space: 'number',
+          vertical: 'boolean'
+        }
       },
-      propTypes: {
-        children: 'string',
-        size: ['sizen1', 'size0', 'size1']
+      component1: {
+        displayName: 'Text',
+        props: {
+          children: 'Hello, world!',
+          size: 'size0'
+        },
+        propTypes: {
+          children: 'string',
+          size: ['sizen1', 'size0', 'size1']
+        }
       }
     }
   }
 
   handlePropChange = (property, value) => {
-    const { component } = this.state
-    component.props[property] = value
-    this.setState({ component })
+    const { components } = this.state
+    components.root.props[property] = value
+    this.setState({ components })
   }
 
   render () {
-    const { component } = this.state
+    const { components } = this.state
 
     return (
       <Container size='viewport'>
@@ -34,11 +51,11 @@ export default class SandboxComponent extends Component {
             position='left'
             size='lg'
           >
-            <EditPanel component={component} onPropChange={this.handlePropChange} />
+            <EditPanel components={components} onPropChange={this.handlePropChange} />
           </Split.Panel>
           <Split.Content>
             <Container size='fill' top={7} left={8} right={3}>
-              <Preview component={component} />
+              <Preview components={components} />
             </Container>
           </Split.Content>
         </Split>

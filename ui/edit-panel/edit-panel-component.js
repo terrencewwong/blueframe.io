@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import { Container, Distribute, Split } from '../../blueframe/layouts'
 import { Checkbox, Input, Select, Spacer, Text } from '../../blueframe/atoms'
+import SourceCode from '../source-code'
 
 // TODO: cleanup this hack
 const VerticalCenter = styled.div`
@@ -31,24 +32,6 @@ const Form = ({ children }) => {
       {labeledChildren}
     </Distribute>
   )
-}
-
-const Code = styled.code`
-  white-space: pre;
-`
-const SourceCode = ({ component }) => {
-  const { displayName, props } = component
-
-  const propsCode = Object.keys(props)
-    .filter(prop => prop !== 'children')
-    .map(prop => `${prop}='${props[prop]}'`)
-    .join(' ')
-
-  const tag = `<${displayName} ${propsCode}>
-  ${props.children}
-</${displayName}>`
-
-  return <Code>{tag}</Code>
 }
 
 const PropsPanel = ({ component, onPropChange }) => {
@@ -99,14 +82,14 @@ const PropsPanel = ({ component, onPropChange }) => {
 
 export default class EditPanelComponent extends Component {
   render () {
-    const { component, onPropChange } = this.props
+    const { components, onPropChange } = this.props
 
     return (
       <Container size='fill' bg='#f1f1f1'>
         <Split>
           <Split.Content>
-            <Container top={7} left={8} right={3}>
-              <SourceCode component={component} />
+            <Container top={2} left={3} right={3} bottom={2}>
+              <SourceCode components={components} />
             </Container>
           </Split.Content>
           <Split.Panel
@@ -114,7 +97,7 @@ export default class EditPanelComponent extends Component {
             border
           >
             <Container size='fill' top={2} bottom={4} left={4} right={4}>
-              <PropsPanel component={component} onPropChange={onPropChange} />
+              <PropsPanel component={components.root} onPropChange={onPropChange} />
             </Container>
           </Split.Panel>
         </Split>
