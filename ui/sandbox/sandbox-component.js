@@ -37,7 +37,7 @@ export default class SandboxComponent extends Component {
             <EditPanel component={component} onPropChange={this.handlePropChange} />
           </Split.Panel>
           <Split.Content>
-            <Container top={7} left={8} right={3}>
+            <Container size='fill' top={7} left={8} right={3}>
               <Preview component={component} />
             </Container>
           </Split.Content>
