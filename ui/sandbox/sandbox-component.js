@@ -5,6 +5,7 @@ import Preview from '../preview'
 
 export default class SandboxComponent extends Component {
   state = {
+    currentComponent: 'root',
     components: {
       root: {
         displayName: 'Distribute',
@@ -35,14 +36,14 @@ export default class SandboxComponent extends Component {
     }
   }
 
-  handlePropChange = (property, value) => {
+  handlePropChange = id => (property, value) => {
     const { components } = this.state
-    components.root.props[property] = value
+    components[id].props[property] = value
     this.setState({ components })
   }
 
   render () {
-    const { components } = this.state
+    const { currentComponent, components } = this.state
 
     return (
       <Container size='viewport'>
@@ -51,7 +52,11 @@ export default class SandboxComponent extends Component {
             position='left'
             size='lg'
           >
-            <EditPanel components={components} onPropChange={this.handlePropChange} />
+            <EditPanel
+              currentComponent={currentComponent}
+              components={components}
+              onPropChange={this.handlePropChange(currentComponent)}
+            />
           </Split.Panel>
           <Split.Content>
             <Container size='fill' top={7} left={8} right={3}>
