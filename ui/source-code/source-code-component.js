@@ -42,10 +42,11 @@ const SourceTree = ({
   const onChildClick = onClick('child')
 
   const propsCode = Object.keys(rest)
+    .filter(prop => propTypes[prop] !== 'boolean' || props[prop])
     .map(prop => {
       switch (propTypes[prop]) {
         case 'boolean':
-          return props[prop] ? prop : ''
+          return prop
 
         case 'number':
           return `${prop}={${props[prop]}}`

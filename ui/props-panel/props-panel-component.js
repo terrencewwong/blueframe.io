@@ -27,7 +27,7 @@ const Form = ({ children }) => {
     )
   })
   return (
-    <Distribute space={2} vertical dividers>
+    <Distribute space={2} vertical>
       {labeledChildren}
     </Distribute>
   )

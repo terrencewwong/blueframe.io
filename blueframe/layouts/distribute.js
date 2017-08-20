@@ -1,38 +1,32 @@
+import React from 'react'
 import styled from 'styled-components'
-import { unit } from '../defaults'
 
-const DistributeContainer = styled.div`
-  display: flex;
-  align-items: flex-start;
-  ${props => props.vertical && 'flex-direction: column;'}
-
-  > * {
-    width: 100%;
-
-    :not(:first-child) {
-      padding-top: ${props => props.space / 2 * unit}px;
-    }
-
-    :not(:last-child) {
-      padding-bottom: ${props => props.space  / 2 * unit - Number(!!props.dividers)}px;
-      border-bottom: 1px solid #D8D8D8;
-    }
-  }
-`
-
-const Distribute = ({ children, vertical, space, dividers }) => {
-  const wrappedChildren = children.map(child => <div>{child}</div>)
-
-  return (
-    <DistributeContainer
-      vertical={vertical}
-      space={space}
-      dividers={dividers}
-    >
-      {wrappedChildren}
-    </DistributeContainer>
-  )
+const ALIGN = {
+  start: 'flex-start',
+  center: 'center',
+  end: 'flex-end'
 }
 
+const Distribute = styled.div`
+  display: flex;
+  align-items: ${props => ALIGN[props.align]};
+
+  & > * {
+    flex: 0 0 auto;
+
+    &:not(:last-child) {
+      ${props => props.vertical
+        ? 'margin-bottom:' + props.space * 8 + 'px'
+        : 'margin-right:' + props.space * 8 + 'px'
+      };
+    }
+  }
+  
+  ${props => props.vertical ? 'flex-direction: column' : ''}
+`
+Distribute.defaultProps = {
+  align: 'start'
+}
 Distribute.displayName = 'Distribute'
+
 export default Distribute

@@ -11,9 +11,9 @@ export default class SandboxComponent extends Component {
       root: {
         displayName: 'Distribute',
         props: {
-          children: ['component1'],
-          align: 'center',
-          space: 2,
+          children: ['component1', 'component2'],
+          align: 'start',
+          space: 0,
           vertical: true
         },
         propTypes: {
@@ -26,7 +26,18 @@ export default class SandboxComponent extends Component {
       component1: {
         displayName: 'Text',
         props: {
-          children: 'Hello, world!',
+          children: 'Blueframe',
+          size: 'size1'
+        },
+        propTypes: {
+          children: 'string',
+          size: ['sizen1', 'size0', 'size1']
+        }
+      },
+      component2: {
+        displayName: 'Text',
+        props: {
+          children: 'for designers and devs',
           size: 'size0'
         },
         propTypes: {
@@ -34,6 +45,7 @@ export default class SandboxComponent extends Component {
           size: ['sizen1', 'size0', 'size1']
         }
       }
+
     }
   }
 
