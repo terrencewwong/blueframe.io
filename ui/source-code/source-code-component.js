@@ -1,24 +1,13 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 import { unit } from '../../blueframe/defaults'
+import Line from './line'
 
 const MAX_LINE_LENGTH = 44
 
 const Pre = styled.pre`
   margin: 0;
   font-size: 13px;
-`
-
-const Line = styled.span`
-  display: ${props => props.block ? 'block' : 'inline-block'};
-  width: 100%;
-  padding-left: ${unit}px;
-  ${props => props.current && 'background-color: white;'}
-  cursor: pointer;
-
-  :hover {
-    background-color: #ebf1fb;
-  }
 `
 
 const hasChildren = children => children instanceof Array && children.length

@@ -70,7 +70,7 @@ export default class SandboxComponent extends Component {
         <Split>
           <Split.Panel
             position='left'
-            size='lg'
+            size='xlg'
           >
             <EditPanel
               currentComponent={currentComponent}

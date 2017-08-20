@@ -75,7 +75,7 @@ const isPositionVertical = position => {
 
 const renderPanelFirst = position => position === 'left' || position === 'top'
 
-const Split = ({ space, children }) => {
+const Split = ({ space, children, ...rest }) => {
   if (children.length !== 2) {
     throw new Error('children must be <Split.Panel> and <Split.Content>')
   }
@@ -98,6 +98,7 @@ const Split = ({ space, children }) => {
       vertical={vertical}
       space={space}
       position={panel.props.position}
+      {...rest}
     >
       {orderedChildren}
     </SplitWrapper>

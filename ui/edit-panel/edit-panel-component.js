@@ -14,7 +14,7 @@ export default ({
   <Container size='fill' bg='#f1f1f1'>
     <Split>
       <Split.Content>
-        <Container top={2} left={2} right={3} bottom={2}>
+        <Container top={2} bottom={2}>
           <SourceCode
             currentComponent={currentComponent}
             currentLine={currentLine}
