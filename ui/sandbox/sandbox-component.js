@@ -3,11 +3,16 @@ import uuidv4 from 'uuid/v4'
 import { Container, Split } from '../../blueframe/layouts'
 import EditPanel from '../edit-panel'
 import Preview from '../preview'
+import ComponentSelector from '../component-selector'
+import componentSchemas from '../../component-schemas.json'
 
 export default class SandboxComponent extends Component {
   state = {
     currentComponent: 'root',
     currentLine: 'openTag',
+    showComponentSelector: false,
+    candidateParent: null,
+    candidateIndex: null,
     components: {
       root: {
         displayName: 'Distribute',
@@ -46,7 +51,6 @@ export default class SandboxComponent extends Component {
           size: ['sizen1', 'size0', 'size1']
         }
       }
-
     }
   }
 
@@ -63,32 +67,54 @@ export default class SandboxComponent extends Component {
     })
   }
 
+  // When the user clicks the + in the source tree
+  // TODO: come up with a better name
   handleAddComponent = (parent, index) => {
-    const { components } = this.state
-    const id = uuidv4()
+    this.setState({
+      showComponentSelector: true,
+      candidateParent: parent,
+      candidateIndex: index
+    })
+  }
 
-    components[id] = {
-      displayName: 'Text',
-      props: {
-        children: 'Hello!',
-        size: 'size0'
-      },
-      propTypes: {
-        children: 'string',
-        size: ['sizen1', 'size0', 'size1']
-      }
+  // When the user selects a component in the component selector
+  // TODO: come up with a better name
+  handleSelectComponent = component => {
+    const schema = componentSchemas[component]
+
+    if (!schema) {
+      throw new Error(`Unsupported Component: ${component}`)
     }
 
-    components[parent].props.children.splice(index, 0, id)
+    const { components, candidateParent, candidateIndex } = this.state
+    const id = uuidv4()
+    components[id] = schema
+    components[candidateParent].props.children.splice(candidateIndex, 0, id)
 
     this.setState({
       currentComponent: id,
+      showComponentSelector: false,
+      candidateParent: null,
+      candidateIndex: null,
       components
     })
   }
 
+  hideComponentSelector = () => {
+    this.setState({
+      showComponentSelector: false,
+      candidateParent: null,
+      candidateIndex: null 
+    })
+  }
+
   render () {
-    const { currentComponent, currentLine, components } = this.state
+    const {
+      currentComponent,
+      currentLine,
+      components,
+      showComponentSelector
+    } = this.state
 
     return (
       <Container size='viewport'>
@@ -112,6 +138,14 @@ export default class SandboxComponent extends Component {
             </Container>
           </Split.Content>
         </Split>
+        {
+          showComponentSelector ? (
+            <ComponentSelector
+              onEscape={this.hideComponentSelector}
+              onSelectComponent={this.handleSelectComponent}
+            />
+          ) : null
+        }
       </Container>
     )
   }

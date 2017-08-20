@@ -34,6 +34,12 @@ const SourceTree = ({
   const onCloseTagClick = onClick('closeTag')
   const onChildClick = onClick('child')
 
+  const onOpenTagAddComponent = canHaveChildren(children)
+    ? () => onAddComponent(id, 0)
+    : !propTypes.children
+      ? () => onAddComponent(parent, index + 1)
+      : null
+
   const propsCode = Object.keys(rest)
     .filter(prop => propTypes[prop] !== 'boolean' || props[prop])
     .map(prop => {
@@ -51,16 +57,18 @@ const SourceTree = ({
 
   const indentation = calculateIndentation(depth)
 
+  const closeBracket = propTypes.children ? '>' : '/>'
   let openTag = indentation + (
     propsCode.length
-      ? `<${displayName} ${propsCode.join(' ')}>`
-      : `<${displayName}>`
+      ? `<${displayName} ${propsCode.join(' ')}${closeBracket}`
+      : `<${displayName}${closeBracket}`
   )
+
 
   if (openTag.length > MAX_LINE_LENGTH) {
     const indentedProps = propsCode.map(prop => '  ' + prop)
 
-    openTag = [`<${displayName}`, ...indentedProps, '/>']
+    openTag = [`<${displayName}`, ...indentedProps, closeBracket]
       .map(line => indentation + line)
       .join('\n')
   }
@@ -68,12 +76,15 @@ const SourceTree = ({
   openTag = (
     <Line
       onClick={onOpenTagClick}
-      onAddComponent={canHaveChildren(children) ? () => onAddComponent(id, 0): null}
+      onAddComponent={onOpenTagAddComponent}
       current={id === currentComponent && currentLine === 'openTag'}
     >
       {openTag}
     </Line>
   )
+
+  // TODO: omg clean up this spaghetti
+  if (!propTypes.children) return <Pre>{openTag}</Pre>
 
   const closeTag = (
     <Line

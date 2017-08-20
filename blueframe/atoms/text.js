@@ -9,7 +9,8 @@ const font = ({ size }) => {
 const BaseText = styled.p`
   ${font}
   ${props => props.monospace && defaults.fonts.monospace}
-  ${props => props.inline && 'display: inline;'}
+  ${props => props.inline ? 'display: inline;' : ''}
+  ${props => props.onClick ? 'cursor: pointer;' : ''}
 `
 
 const Text = ({ tag = 'p', children, ...rest }) => {

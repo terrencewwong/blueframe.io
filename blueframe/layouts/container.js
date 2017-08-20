@@ -7,7 +7,8 @@ const dimensions = ({
   theme = {},
   size,
   'preferred-width': preferredWidth,
-  width
+  width,
+  height
 }) => {
   if (size === 'viewport') {
     return 'width: 100vw; height: 100vh;'
@@ -20,8 +21,14 @@ const dimensions = ({
     `
   }
 
-  width = width || theme.sizes && theme.sizes[size] || defaults.sizes[size]
-  return width ? `width: ${width};`: ''
+  width = width || theme.sizes && theme.sizes[size] || defaults.sizes[size] + 'px'
+  height = height ? defaults.sizes[height] + 'px' : '100%'
+
+  let css = ''
+  css += width ? `width: ${width};` : ''
+  css += height ? `height: ${height};` : ''
+
+  return css
 }
 
 const background = ({ theme = {}, bg }) => {
@@ -51,13 +58,13 @@ export const BareContainer = styled.div`
   box-sizing: border-box;
   ${padding}
   ${background}
-  ${props => props.additionalCSS}
 `
 
 const OuterContainer = styled(BareContainer)`
   display: flex;
   ${dimensions}
   ${centering}
+  ${props => props.additionalCSS}
 `
 
 const Fill = styled.div`
@@ -74,6 +81,15 @@ const Container = ({
   ...rest
 }) => {
   const InnerContainer = centerText ? CenteredText : Fill
+
+  // TODO: fix this so it's less shitty
+  if (rest['center-horizontal'] || rest['center-vertical']) {
+    return (
+      <OuterContainer {...rest}>
+        {children}
+      </OuterContainer>
+    )
+  }
 
   return (
     <OuterContainer {...rest}>

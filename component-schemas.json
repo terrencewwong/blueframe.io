@@ -1,0 +1,44 @@
+{
+  "Button": {
+    "displayName": "Button",
+    "props": {
+      "children": "Click me",
+      "primary": false
+    },
+    "propTypes": {
+      "children": "string",
+      "primary": "boolean"
+    }
+  },
+  "Text": {
+    "displayName": "Text",
+    "props": {
+      "children": "Hello!",
+      "size": "size0"
+    },
+    "propTypes": {
+      "children": "string",
+      "size": ["sizen1", "size0", "size1"]
+    }
+  },
+  "Input": {
+    "displayName": "Input",
+    "props": {
+      "size": "md",
+      "placeholder": "type here..."
+    },
+    "propTypes": {
+      "size": ["xsm", "sm", "md", "lg", "xlg", "xxlg"],
+      "placeholder": "string"
+    }
+  },
+  "Checkbox": {
+    "displayName": "Checkbox",
+    "props": {
+      "checked": true
+    },
+    "propTypes": {
+      "checked": "boolean"
+    }
+  }
+}
