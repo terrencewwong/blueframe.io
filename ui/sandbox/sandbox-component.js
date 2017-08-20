@@ -6,6 +6,7 @@ import Preview from '../preview'
 export default class SandboxComponent extends Component {
   state = {
     currentComponent: 'root',
+    currentLine: 'openTag',
     components: {
       root: {
         displayName: 'Distribute',
@@ -42,8 +43,15 @@ export default class SandboxComponent extends Component {
     this.setState({ components })
   }
 
+  handleLineClick = (id, line)  => {
+    this.setState({
+      currentComponent: id,
+      currentLine: line,
+    })
+  }
+
   render () {
-    const { currentComponent, components } = this.state
+    const { currentComponent, currentLine, components } = this.state
 
     return (
       <Container size='viewport'>
@@ -54,8 +62,10 @@ export default class SandboxComponent extends Component {
           >
             <EditPanel
               currentComponent={currentComponent}
+              currentLine={currentLine}
               components={components}
               onPropChange={this.handlePropChange(currentComponent)}
+              onLineClick={this.handleLineClick}
             />
           </Split.Panel>
           <Split.Content>

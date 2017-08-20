@@ -1,20 +1,46 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
+import { unit } from '../../blueframe/defaults'
 
 const MAX_LINE_LENGTH = 44
 
-const Code = styled.code`
+const Pre = styled.pre`
+  margin: 0;
   font-size: 13px;
-  white-space: pre;
+`
+
+const Line = styled.span`
+  display: ${props => props.block ? 'block' : 'inline-block'};
+  width: 100%;
+  padding-left: ${unit}px;
+  ${props => props.current && 'background-color: white;'}
+  cursor: pointer;
+
+  :hover {
+    background-color: #ebf1fb;
+  }
 `
 
 const hasChildren = children => children instanceof Array && children.length
 const calculateIndentation = depth =>
   Array.from(Array(depth)).map(() => '  ').join('')
 
-const SourceTree = ({ id, components, depth }) => {
+const SourceTree = ({
+  id,
+  currentComponent,
+  currentLine,
+  components,
+  depth,
+  onLineClick
+}) => {
   const { displayName, props, propTypes } = components[id]
   const { children, ...rest } = props
+
+  const onClick = lineType => () => onLineClick(id, lineType)
+  const onOpenTagClick = onClick('openTag')
+  const onCloseTagClick = onClick('closeTag')
+  const onChildClick = onClick('child')
+
   const propsCode = Object.keys(rest)
     .map(prop => {
       switch (propTypes[prop]) {
@@ -37,7 +63,6 @@ const SourceTree = ({ id, components, depth }) => {
       : `<${displayName}>`
   )
 
-  console.log(openTag.length)
   if (openTag.length > MAX_LINE_LENGTH) {
     const indentedProps = propsCode.map(prop => '  ' + prop)
 
@@ -46,22 +71,64 @@ const SourceTree = ({ id, components, depth }) => {
       .join('\n')
   }
 
-  const closeTag = indentation + `</${displayName}>`
+  openTag = (
+    <Line
+      onClick={onOpenTagClick}
+      current={id === currentComponent && currentLine === 'openTag'}
+    >
+      {openTag}
+    </Line>
+  )
 
-  if (hasChildren(children)) {
-    const sourceChildren = children.map(child => SourceTree({ id: child, components, depth: depth + 1 }))
-    return [openTag, sourceChildren, closeTag].join('\n')
-  }
+  const closeTag = (
+    <Line
+      onClick={onCloseTagClick}
+      current={id === currentComponent && currentLine === 'closeTag'}
+    >
+      {indentation + `</${displayName}>`}
+    </Line>
+  )
 
-  return [openTag, '  ' + indentation + props.children, closeTag].join('\n')
+  const sourceChildren = !hasChildren(children) ? (
+    <Line
+      block
+      current={id === currentComponent && currentLine === 'child'}
+      onClick={onChildClick}
+    >
+      {indentation + '  ' + props.children}
+    </Line>
+  ) : children.map(child => (
+    <SourceTree
+      id={child}
+      currentComponent={currentComponent}
+      currentLine={currentLine}
+      components={components}
+      depth={depth + 1}
+      onLineClick={onLineClick}
+    />
+  ))
+
+  return (
+    <Pre>
+      {openTag}
+      {sourceChildren}
+      {closeTag}
+    </Pre>
+  )
 }
 
-export default ({ components }) => {
-  const sourceTree = SourceTree({
-    id: 'root',
-    components,
-    depth: 0
-  })
-
-  return <Code>{sourceTree}</Code>
-}
+export default ({
+  currentComponent,
+  currentLine,
+  components,
+  onLineClick
+}) => (
+  <SourceTree
+    id='root'
+    currentComponent={currentComponent}
+    currentLine={currentLine}
+    components={components}
+    depth={0}
+    onLineClick={onLineClick}
+  />
+)

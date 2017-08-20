@@ -4,12 +4,23 @@ import { Container, Split } from '../../blueframe/layouts'
 import SourceCode from '../source-code'
 import PropsPanel from '../props-panel'
 
-export default ({ components, currentComponent = 'root', onPropChange }) => (
+export default ({
+  components,
+  currentComponent = 'root',
+  currentLine = 'openTag',
+  onPropChange,
+  onLineClick
+}) => (
   <Container size='fill' bg='#f1f1f1'>
     <Split>
       <Split.Content>
-        <Container top={2} left={3} right={3} bottom={2}>
-          <SourceCode components={components} />
+        <Container top={2} left={2} right={3} bottom={2}>
+          <SourceCode
+            currentComponent={currentComponent}
+            currentLine={currentLine}
+            components={components}
+            onLineClick={onLineClick}
+          />
         </Container>
       </Split.Content>
       <Split.Panel
