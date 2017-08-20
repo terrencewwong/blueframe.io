@@ -14,7 +14,8 @@
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
     "styled-components": "^2.1.2",
-    "styled-conditional-include": "^1.0.1"
+    "styled-conditional-include": "^1.0.1",
+    "uuid": "^3.1.0"
   },
   "scripts": {
     "dev": "next",

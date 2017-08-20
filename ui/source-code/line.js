@@ -15,7 +15,7 @@ const LineWrapper = styled(Split)`
   }
 
   :hover .left-space, :hover .line-source, :hover .right-space {
-    border-bottom: 1px solid #cacaca;
+    ${props => props.border ? 'box-shadow: 0 1px #cacaca;' : ''}
   }
 
   .line-source:hover {
@@ -39,15 +39,28 @@ export default class Line extends Component {
 
   hoverOn = () => this.setState({ hasHover: true })
   hoverOff = () => this.setState({ hasHover: false })
+  handleAddComponent = e => {
+    const { onAddComponent } = this.props
+
+    if (onAddComponent) {
+      e.stopPropagation()
+      onAddComponent()
+    }
+  }
 
   render () {
-    const { children, ...rest } = this.props
-    const addComponent = this.state.hasHover ? (
-      <AddComponent>+</AddComponent>
+    const { children, onAddComponent, ...rest } = this.props
+    const addComponent = onAddComponent && this.state.hasHover ? (
+      <AddComponent onClick={this.handleAddComponent}>+</AddComponent>
     ) : null
 
     return (
-      <LineWrapper onMouseEnter={this.hoverOn} onMouseLeave={this.hoverOff} {...rest}>
+      <LineWrapper
+        onMouseEnter={this.hoverOn}
+        onMouseLeave={this.hoverOff}
+        border={!!onAddComponent}
+        {...rest}
+      >
         <Split.Panel position='left' width='52px'>
           <Split>
             <Split.Panel position='left' width='20px' className='left-space' />

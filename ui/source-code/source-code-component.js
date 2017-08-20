@@ -10,17 +10,21 @@ const Pre = styled.pre`
   font-size: 13px;
 `
 
-const hasChildren = children => children instanceof Array && children.length
+const canHaveChildren = children => children instanceof Array
+const hasChildren = children => canHaveChildren(children) && children.length
 const calculateIndentation = depth =>
   Array.from(Array(depth)).map(() => '  ').join('')
 
 const SourceTree = ({
   id,
+  parent,
+  index,
   currentComponent,
   currentLine,
   components,
   depth,
-  onLineClick
+  onLineClick,
+  onAddComponent
 }) => {
   const { displayName, props, propTypes } = components[id]
   const { children, ...rest } = props
@@ -64,6 +68,7 @@ const SourceTree = ({
   openTag = (
     <Line
       onClick={onOpenTagClick}
+      onAddComponent={canHaveChildren(children) ? () => onAddComponent(id, 0): null}
       current={id === currentComponent && currentLine === 'openTag'}
     >
       {openTag}
@@ -73,6 +78,7 @@ const SourceTree = ({
   const closeTag = (
     <Line
       onClick={onCloseTagClick}
+      onAddComponent={parent ? () => onAddComponent(parent, index + 1) : null}
       current={id === currentComponent && currentLine === 'closeTag'}
     >
       {indentation + `</${displayName}>`}
@@ -87,14 +93,17 @@ const SourceTree = ({
     >
       {indentation + '  ' + props.children}
     </Line>
-  ) : children.map(child => (
+  ) : children.map((child, index) => (
     <SourceTree
       id={child}
+      parent={id}
+      index={index}
       currentComponent={currentComponent}
       currentLine={currentLine}
       components={components}
       depth={depth + 1}
       onLineClick={onLineClick}
+      onAddComponent={onAddComponent}
     />
   ))
 
@@ -111,7 +120,8 @@ export default ({
   currentComponent,
   currentLine,
   components,
-  onLineClick
+  onLineClick,
+  onAddComponent
 }) => (
   <SourceTree
     id='root'
@@ -120,5 +130,6 @@ export default ({
     components={components}
     depth={0}
     onLineClick={onLineClick}
+    onAddComponent={onAddComponent}
   />
 )

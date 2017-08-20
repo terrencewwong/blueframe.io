@@ -9,7 +9,8 @@ export default ({
   currentComponent = 'root',
   currentLine = 'openTag',
   onPropChange,
-  onLineClick
+  onLineClick,
+  onAddComponent
 }) => (
   <Container size='fill' bg='#f1f1f1'>
     <Split>
@@ -20,6 +21,7 @@ export default ({
             currentLine={currentLine}
             components={components}
             onLineClick={onLineClick}
+            onAddComponent={onAddComponent}
           />
         </Container>
       </Split.Content>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import uuidv4 from 'uuid/v4'
 import { Container, Split } from '../../blueframe/layouts'
 import EditPanel from '../edit-panel'
 import Preview from '../preview'
@@ -62,6 +63,30 @@ export default class SandboxComponent extends Component {
     })
   }
 
+  handleAddComponent = (parent, index) => {
+    const { components } = this.state
+    const id = uuidv4()
+
+    components[id] = {
+      displayName: 'Text',
+      props: {
+        children: 'Hello!',
+        size: 'size0'
+      },
+      propTypes: {
+        children: 'string',
+        size: ['sizen1', 'size0', 'size1']
+      }
+    }
+
+    components[parent].props.children.splice(index, 0, id)
+
+    this.setState({
+      currentComponent: id,
+      components
+    })
+  }
+
   render () {
     const { currentComponent, currentLine, components } = this.state
 
@@ -78,6 +103,7 @@ export default class SandboxComponent extends Component {
               components={components}
               onPropChange={this.handlePropChange(currentComponent)}
               onLineClick={this.handleLineClick}
+              onAddComponent={this.handleAddComponent}
             />
           </Split.Panel>
           <Split.Content>
