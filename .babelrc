@@ -1,0 +1,10 @@
+{
+  "presets": [
+    "next/babel",
+    "env",
+    "stage-2"
+  ],
+  "plugins": [
+    ["styled-components", { "ssr": true, "displayName": true, "preprocess": false } ]
+  ]
+}
