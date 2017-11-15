@@ -2,6 +2,7 @@
 import React from 'react'
 import TagNameEditor from './tag-name-editor'
 import PropEditor from './prop-editor'
+import Monospace from './monospace'
 import { TAB } from './keycodes'
 import { componentDefinitionMap } from './defaults'
 import type { ComponentDefinitionMap, PropDefinition } from './types/components'
@@ -12,6 +13,7 @@ class ComponentEditor extends React.Component<{
   componentDefinitionMap: ComponentDefinitionMap,
   name: string,
   props: Prop[],
+  selfClosing: boolean,
   onComponentChange?: (component: Component) => void,
   onComponentDelete?: () => void
 }, {
@@ -151,11 +153,11 @@ class ComponentEditor extends React.Component<{
   }
 
   render () {
-    const { componentDefinitionMap, name } = this.props
+    const { componentDefinitionMap, name, selfClosing } = this.props
     const { isEditingTagName } = this.state
 
     return (
-      <span>
+      <Monospace>
         {'<'}
         <TagNameEditor
           componentDefinitionMap={componentDefinitionMap}
@@ -167,8 +169,8 @@ class ComponentEditor extends React.Component<{
           onTagNameDelete={this.handleTagNameDelete}
         />
         {this.renderProps()}
-        {'>'}
-      </span>
+        { selfClosing ? '/>' : '>'}
+      </Monospace>
     )
   }
 }

@@ -1,12 +1,17 @@
 // @flow
 import React, { Component } from 'react'
+import styled from 'styled-components'
 import { ENTER, ESC, TAB } from '../keycodes'
 import PropInput from './prop-input'
 import { componentDefinitionMap } from '../defaults'
 import type { ComponentDefinitionMap, Prop, PropDefinition } from '../types/components'
 
-// TODO: actually implement this
-const PropText = props => <span {...props} />
+const PropNameText = styled.span`
+  color: #994500;
+`
+const PropValueText = styled.span`
+  color: #1a1aa6;
+`
 
 class PropEditor extends Component<{
   component: string,
@@ -140,7 +145,7 @@ class PropEditor extends Component<{
     }
 
     return (
-      <span>{valueString}</span>
+      <PropValueText>{valueString}</PropValueText>
     )
   }
 
@@ -149,7 +154,7 @@ class PropEditor extends Component<{
 
     return isEditing ? this.renderPropInput() : (
       <span onDoubleClick={this.toggleEdit}>
-        <PropText>{name}</PropText>
+        <PropNameText>{name}</PropNameText>
         {this.renderValueText()}
       </span>
     )

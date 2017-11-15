@@ -40,6 +40,7 @@ storiesOf('ComponentEditor', module)
           value: 'm'
         }
       ]}
+      selfClosing={false}
       onComponentChange={component => console.log(`onComponentChange - ${JSON.stringify(component)}`)}
       onComponentDelete={() => console.log('onComponentDelete')}
     />

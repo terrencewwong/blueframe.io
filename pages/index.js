@@ -1,44 +1,10 @@
 // @flow
-import React, { Children } from 'react'
-// import type { ComponentId, ComponentMap, ComponentDefinitionMap } from '../components/types'
-// import SourceEditor from '../components/source-editor'
-
-const componentDefinitionMap = {
-  Distribute: {
-    name: 'Distribute',
-    props: [
-      {
-        name: 'vertical',
-        type: 'boolean',
-        required: false
-      }
-    ],
-    selfClosing: false
-  },
-
-  Text: {
-    name: 'Text',
-    props: [
-      {
-        name: 'size',
-        type: 'string',
-        required: false
-      }
-    ],
-    selfClosing: false
-  },
-
-  Input: {
-    name: 'Input',
-    props: [],
-    selfClosing: true
-  }
-}
+import React from 'react'
 
 //const componentMap: ComponentMap = {
 //  root: {
-//    name: 'Distribute',
-//    attributes: [{ name: 'vertical', value: true }],
+//    name: 'Text',
+//    props: [{ name: 'size', value: 'm' }],
 //    children: ['1']
 //  },
 //  '1': {

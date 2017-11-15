@@ -5,6 +5,7 @@ const Menu = styled.div`
   position: fixed;
   margin-top: 4px;
   min-width: 147px;
+  background-color: white;
   font-family: Menlo, monospace;
   font-size: 11px;
   line-height: 13px;

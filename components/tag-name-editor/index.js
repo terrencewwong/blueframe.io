@@ -1,12 +1,10 @@
 // @flow
 import React, { Component } from 'react'
+import TagNameText from '../tag-name-text'
 import { ENTER, ESC } from '../keycodes'
 import TagNameInput from './tag-name-input'
 import { componentDefinitionMap } from '../defaults'
 import type { ComponentDefinitionMap } from '../types/components'
-
-// TODO: actually implement this
-const TagNameText = props => <span {...props} />
 
 class TagNameEditor extends Component<{
   componentDefinitionMap: ComponentDefinitionMap,
