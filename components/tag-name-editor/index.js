@@ -26,12 +26,15 @@ class TagNameEditor extends Component<{
   }
 
   handleInputKeyDown = (e: Event) => {
-    const { onKeyDown, onTagNameDelete } = this.props
+    const { name, onKeyDown, onTagNameDelete } = this.props
 
     if (e.keyCode === ENTER || e.keyCode === ESC) {
       this.toggleEdit()
-      onTagNameDelete && onTagNameDelete()
-      return
+
+      if (!name) {
+        onTagNameDelete && onTagNameDelete()
+        return
+      }
     }
 
     onKeyDown && onKeyDown(e)

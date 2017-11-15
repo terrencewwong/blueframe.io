@@ -6,10 +6,14 @@ import PropInput from './prop-input'
 import { componentDefinitionMap } from '../defaults'
 import type { ComponentDefinitionMap, Prop, PropDefinition } from '../types/components'
 
-const PropNameText = styled.span`
+const PropNameText = styled.span.attrs({
+  className: 'prop-name-text'
+})`
   color: #994500;
 `
-const PropValueText = styled.span`
+const PropValueText = styled.span.attrs({
+  className: 'prop-value-text'
+})`
   color: #1a1aa6;
 `
 
@@ -137,15 +141,25 @@ class PropEditor extends Component<{
     const { value } = this.props
     if (value === true) return null
 
+    let preValueString
     let valueString
+    let postValueString
     if (typeof value === 'string') {
-      valueString = `='${value}'`
+      preValueString = `='`
+      valueString = value
+      postValueString = `'`
     } else {
-      valueString = `={${JSON.stringify(value)}}`
+      preValueString = `={`
+      valueString = JSON.stringify(value)
+      postValueString = `}`
     }
 
     return (
-      <PropValueText>{valueString}</PropValueText>
+      <span>
+        {preValueString}
+        <PropValueText>{valueString}</PropValueText>
+        {postValueString}
+      </span>
     )
   }
 

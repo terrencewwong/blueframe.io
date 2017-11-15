@@ -15,7 +15,8 @@ class ComponentEditor extends React.Component<{
   props: Prop[],
   selfClosing: boolean,
   onComponentChange?: (component: Component) => void,
-  onComponentDelete?: () => void
+  onComponentDelete?: () => void,
+  onComponentKeyDown?: (e: Event) => void
 }, {
   isEditingTagName: boolean,
   editingPropIndex: ?number
@@ -90,17 +91,19 @@ class ComponentEditor extends React.Component<{
   }
 
   handleTagNameKeyDown = (e: Event) => {
-    const { props } = this.props
+    const { props, onComponentKeyDown } = this.props
     if (e.keyCode === TAB) {
       e.preventDefault()
       e.shiftKey
         ? this.setState({ editingPropIndex: props.length - 1 })
         : this.setState({ editingPropIndex: 0 })
     }
+
+    onComponentKeyDown && onComponentKeyDown(e)
   }
 
   handlePropKeyDown = (e: Event) => {
-    const { props } = this.props
+    const { props, onComponentKeyDown } = this.props
     const { editingPropIndex } = this.state
 
     if (e.keyCode === TAB) {
@@ -122,6 +125,8 @@ class ComponentEditor extends React.Component<{
           : this.setState({ editingPropIndex: editingPropIndex + 1 })
       }
     }
+
+    onComponentKeyDown && onComponentKeyDown(e)
   }
 
   renderProps () {

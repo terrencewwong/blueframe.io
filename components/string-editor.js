@@ -2,6 +2,7 @@
 import React from 'react'
 import Line from './line'
 import Monospace from './monospace'
+import PlainText from './plain-text'
 import { ENTER, ESC } from './keycodes'
 
 class AutofocusInput extends React.Component<*> {
@@ -21,7 +22,8 @@ class AutofocusInput extends React.Component<*> {
 
 export default class StringEditor extends React.Component<{
   value: string,
-  onValueChange?: (value: string) => void
+  onValueChange?: (value: string) => void,
+  onKeyDown?: (e: Event) => void
 }, {
   isEditing: boolean
 }>{
@@ -32,9 +34,13 @@ export default class StringEditor extends React.Component<{
   toggleEdit = () => this.setState({ isEditing: !this.state.isEditing })
 
   handleKeyDown = (e: Event) => {
+    const { onKeyDown } = this.props
+
     if (e.keyCode === ENTER || e.keyCode === ESC) {
       this.toggleEdit()
     }
+
+    onKeyDown && onKeyDown(e)
   }
 
   render () {
@@ -51,10 +57,9 @@ export default class StringEditor extends React.Component<{
       />
     ) : (
       <Monospace
-        plainText
         onDoubleClick={this.toggleEdit}
       >
-        {value}
+        <PlainText>{value}</PlainText>
       </Monospace>
     )
   }
