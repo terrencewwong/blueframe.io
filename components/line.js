@@ -26,7 +26,6 @@ const isCurrentLineStyles = ({ isCurrentLine, plainText }) => {
   `
 }
 
-// HACK - `calcIsCurrentLine` is a function because the subtrees are rendered asynchronously
 const Highlightable = styled.div`
   ${isCurrentLineStyles}
 
@@ -34,22 +33,16 @@ const Highlightable = styled.div`
 `
 
 class Line extends React.Component<{
-  calcIsCurrentLine: () => boolean,
+  isCurrentLine: boolean,
   depth: number,
-  innerRef: (elem: ?HTMLDivElement) => *,
   children: Node
 }> {
   render () {
     const {
-      calcIsCurrentLine,
       depth,
       children,
-      innerRef,
       ...rest
     } = this.props
-
-    const isCurrentLine = calcIsCurrentLine()
-    const ref = isCurrentLine ? innerRef : () => {}
 
     const spaces = depth ? (
       <Monospace
@@ -63,8 +56,6 @@ class Line extends React.Component<{
     // see: https://stackoverflow.com/a/44434971
     return (
       <Highlightable
-        innerRef={ref}
-        isCurrentLine={isCurrentLine}
         tabIndex={0}
         {...rest}
       >

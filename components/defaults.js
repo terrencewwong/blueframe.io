@@ -34,5 +34,9 @@ export const componentDefinitionMap: ComponentDefinitionMap = {
       }
     ],
     selfClosing: false
+  },
+  Distribute: {
+    name: 'Distribute',
+    selfClosing: false
   }
 }

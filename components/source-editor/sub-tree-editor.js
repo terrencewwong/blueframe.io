@@ -6,7 +6,7 @@ import TagNameText from '../tag-name-text'
 import { componentDefinitionMap } from '../defaults'
 import ComponentEditor from '../component-editor'
 import StringEditor from '../string-editor'
-import type { Component, ComponentMap, ComponentDefinitionMap } from '../types/components'
+import type { Component, ComponentMap, ComponentDefinitionMap, TagType } from '../types/components'
 
 const ClosingTag = ({ name }) => (
   <Monospace>
@@ -20,18 +20,15 @@ class SubTreeEditor extends React.Component<{
   componentId: string,
   componentMap: ComponentMap,
   componentDefinitionMap: ComponentDefinitionMap,
-  currentLine: ?number,
-  currentLineRef: (elem: ?HTMLDivElement) => *,
+  currentComponentId: ?string,
+  currentTag: ?TagType,
   depth: number,
   lineOffset: number,
   onComponentChange?: (id: string, component: Component | string) => void,
   onComponentKeyDown: (e: Event) => void,
-  onLineClick?: (line: number) => void,
-  onLineKeyDown?: (e: Event) => void,
-  __reportTotalLinesAfterRender?: (lines: number) => void
+  onLineClick?: (componentId: string, tag: TagType) => void,
+  onLineKeyDown?: (e: Event) => void
 }>{
-  __totalSubTreeLines: number = 0
-
   static defaultProps = {
     componentId: 'root',
     componentDefinitionMap,
@@ -44,9 +41,9 @@ class SubTreeEditor extends React.Component<{
     onComponentChange && onComponentChange(componentId, component)
   }
 
-  handleLineClick = (line: number) => {
-    const { onLineClick } = this.props
-    onLineClick && onLineClick(line)
+  handleLineClick = (tag: TagType) => {
+    const { onLineClick, componentId } = this.props
+    onLineClick && onLineClick(componentId, tag)
   }
 
   handleLineKeyDown = (e: Event) => {
@@ -54,15 +51,7 @@ class SubTreeEditor extends React.Component<{
     onLineKeyDown && onLineKeyDown(e)
   }
 
-  handleReportLines = (lines: number) => {
-    const { __reportTotalLinesAfterRender } = this.props
-    __reportTotalLinesAfterRender && __reportTotalLinesAfterRender(lines)
-  }
-
   renderChildren (children: string[]) {
-    // HACK - reset __totalSubTreeLines
-    this.__totalSubTreeLines = 0
-
     const { depth, lineOffset, ...rest } = this.props
     const subTrees = []
 
@@ -77,10 +66,6 @@ class SubTreeEditor extends React.Component<{
           {...rest}
           componentId={child}
           depth={depth + 1}
-          lineOffset={lineOffset + this.__totalSubTreeLines + 1}
-          __reportTotalLinesAfterRender={lines => {
-            this.__totalSubTreeLines = this.__totalSubTreeLines + lines
-          }}
         />
       )
       subTrees.push(subTree)
@@ -90,14 +75,19 @@ class SubTreeEditor extends React.Component<{
   }
 
   renderCloseTag (name: string) {
-    const { currentLine, depth, lineOffset, currentLineRef } = this.props
+    const {
+      componentId,
+      currentComponentId,
+      currentTag,
+      depth,
+      lineOffset
+    } = this.props
     return (
       <Line
         depth={depth}
-        onClick={() => this.handleLineClick(lineOffset + this.__totalSubTreeLines + 1)}
+        isCurrentLine={!!currentComponentId && currentComponentId === componentId && currentTag === 'closing'}
+        onClick={() => this.handleLineClick('closing')}
         onKeyDown={this.handleLineKeyDown}
-        calcIsCurrentLine={() => currentLine === lineOffset + this.__totalSubTreeLines + 1}
-        innerRef={currentLineRef}
       >
         <ClosingTag name={name} />
       </Line>
@@ -109,26 +99,23 @@ class SubTreeEditor extends React.Component<{
       componentId,
       componentMap,
       componentDefinitionMap,
-      currentLine,
+      currentComponentId,
+      currentTag,
       depth,
       lineOffset,
-      currentLineRef,
-      onComponentKeyDown,
-      __reportTotalLinesAfterRender
+      onComponentKeyDown
     } = this.props
 
     const component = componentMap[componentId]
 
     // CASE 1: component is just a string
     if (typeof component === 'string') {
-      this.handleReportLines(1)
       return (
         <Line
           depth={depth}
-          onClick={() => this.handleLineClick(lineOffset)}
+          isCurrentLine={!!currentComponentId && currentComponentId === componentId}
+          onClick={() => this.handleLineClick('self-closing')}
           onKeyDown={this.handleLineKeyDown}
-          calcIsCurrentLine={() => currentLine === lineOffset}
-          innerRef={currentLineRef}
         >
           <StringEditor
             value={component}
@@ -147,13 +134,16 @@ class SubTreeEditor extends React.Component<{
       throw new Error('selfClosing elements cannot have children.')
     }
 
+    const isCurrentLine = selfClosing
+      ? !!currentComponentId && currentComponentId === componentId
+      : !!currentComponentId && currentComponentId === componentId && currentTag === 'opening'
+
     const componentEditor = (
       <Line
         depth={depth}
-        onClick={() => this.handleLineClick(lineOffset)}
+        isCurrentLine={isCurrentLine}
+        onClick={() => this.handleLineClick(selfClosing ? 'self-closing' : 'opening')}
         onKeyDown={this.handleLineKeyDown}
-        calcIsCurrentLine={() => currentLine === lineOffset}
-        innerRef={currentLineRef}
       >
         <ComponentEditor
           {...component}
@@ -166,12 +156,10 @@ class SubTreeEditor extends React.Component<{
 
     // CASE 2: Component is a self closing element
     if (selfClosing) {
-      this.handleReportLines(1)
       return componentEditor
     }
 
     // CASE 3: Component has children
-    this.handleReportLines(this.__totalSubTreeLines + 2)
     return (
       <div>
         { componentEditor }

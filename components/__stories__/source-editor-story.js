@@ -6,6 +6,10 @@ import type { ComponentMap } from '../types/components'
 
 const componentMap = {
   root: {
+    name: 'Distribute',
+    children: ['text', 'button']
+  },
+  text: {
     name: 'Text',
     props: [
       {
@@ -13,9 +17,20 @@ const componentMap = {
         value: 'm'
       }
     ],
-    children: ['child']
+    children: ['textContent']
   },
-  child: 'Hello, world!'
+  textContent: 'label for a button',
+  button: {
+    name: 'Button',
+    props: [
+      {
+        name: 'size',
+        value: 'm'
+      }
+    ],
+    children: ['buttonContent']
+  },
+  buttonContent: 'Click me!'
 }
 
 class StatefulSourceEditor extends React.Component<*, {
