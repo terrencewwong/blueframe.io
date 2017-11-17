@@ -14,21 +14,22 @@ class ComponentEditor extends React.Component<{
   name: string,
   props: Prop[],
   selfClosing?: boolean,
+  editingPropIndex: ?number,
   onComponentChange?: (component: Component) => void,
   onComponentDelete?: () => void,
-  onComponentKeyDown?: (e: Event) => void
+  onComponentKeyDown?: (e: Event) => void,
+  onEditPropIndexChange?: (index: ?number) => void
 }, {
   isEditingTagName: boolean,
-  editingPropIndex: ?number
 }> {
   static defaultProps = {
     componentDefinitionMap,
+    editingPropIndex: null,
     props: []
   }
 
   state = {
-    isEditingTagName: false,
-    editingPropIndex: null
+    isEditingTagName: false
   }
 
   _getPropDefinitions (): ?PropDefinition[] {
@@ -50,11 +51,16 @@ class ComponentEditor extends React.Component<{
     this.setState({ isEditingTagName: !this.state.isEditingTagName })
   }
 
+  handleEditPropIndexChange = (index: ?number) => {
+    const { onEditPropIndexChange } = this.props
+    onEditPropIndexChange && onEditPropIndexChange(index)
+  }
+
   handlePropToggleEdit = (index: number) => {
-    const { editingPropIndex } = this.state
+    const { editingPropIndex } = this.props
     editingPropIndex === null
-      ? this.setState({ editingPropIndex: index })
-      : this.setState({ editingPropIndex: null })
+      ? this.handleEditPropIndexChange(index)
+      : this.handleEditPropIndexChange(null)
   }
  
   handleComponentPropChange = (index: number, prop: Prop) => {
@@ -95,34 +101,39 @@ class ComponentEditor extends React.Component<{
     if (e.keyCode === TAB) {
       e.preventDefault()
       e.shiftKey
-        ? this.setState({ editingPropIndex: props.length - 1 })
-        : this.setState({ editingPropIndex: 0 })
+        ? this.handleEditPropIndexChange(props.length - 1)
+        : this.handleEditPropIndexChange(0)
     }
 
     onComponentKeyDown && onComponentKeyDown(e)
   }
 
   handlePropKeyDown = (e: Event) => {
-    const { props, onComponentKeyDown } = this.props
-    const { editingPropIndex } = this.state
+    const { editingPropIndex, props, onComponentKeyDown } = this.props
 
     if (e.keyCode === TAB) {
       e.preventDefault()
 
-      if (editingPropIndex === null || typeof editingPropIndex === 'undefined') {
+      if (typeof editingPropIndex !== 'number') {
         throw new Error('Cannot set move edit when editingPropIndex does not exist.')
       }
 
       if (e.shiftKey) {
-        editingPropIndex === 0
-          ? this.setState({ isEditingTagName: true, editingPropIndex: null })
-          : this.setState({ editingPropIndex: editingPropIndex - 1 })
+        if (editingPropIndex === 0) {
+          this.setState({ isEditingTagName: true })
+          this.handleEditPropIndexChange(null)
+        } else {
+          this.handleEditPropIndexChange(editingPropIndex - 1)
+        }
       } else {
         const propDefinitions = this._getPropDefinitions() || []
+        if (editingPropIndex === props.length - 1 && props.length === propDefinitions.length) {
+          this.setState({ isEditingTagName: true })
+          this.handleEditPropIndexChange(null)
+        } else {
+          this.handleEditPropIndexChange(editingPropIndex + 1)
+        }
 
-        editingPropIndex === props.length - 1 && props.length === propDefinitions.length
-          ? this.setState({ isEditingTagName: true, editingPropIndex: null })
-          : this.setState({ editingPropIndex: editingPropIndex + 1 })
       }
     }
 
@@ -130,8 +141,12 @@ class ComponentEditor extends React.Component<{
   }
 
   renderProps () {
-    const { componentDefinitionMap, name, props } = this.props
-    const { editingPropIndex } = this.state
+    const {
+      editingPropIndex,
+      componentDefinitionMap,
+      name,
+      props
+    } = this.props
 
     // We must be adding a new prop!
     // Should this be in render...?

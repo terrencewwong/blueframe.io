@@ -22,42 +22,44 @@ class AutofocusInput extends React.Component<*> {
 
 export default class StringEditor extends React.Component<{
   value: string,
+  isEditing: boolean,
   onValueChange?: (value: string) => void,
-  onKeyDown?: (e: Event) => void
-}, {
-  isEditing: boolean
+  onKeyDown?: (e: Event) => void,
+  onToggleEdit?: () => void
 }>{
-  state = {
+  static defaultProps = {
     isEditing: false
   }
 
-  toggleEdit = () => this.setState({ isEditing: !this.state.isEditing })
+  handleToggleEdit = () => {
+    const { onToggleEdit } = this.props
+    onToggleEdit && onToggleEdit()
+  }
 
   handleKeyDown = (e: Event) => {
     const { onKeyDown } = this.props
 
     if (e.keyCode === ENTER || e.keyCode === ESC) {
-      this.toggleEdit()
+      this.handleToggleEdit()
     }
 
     onKeyDown && onKeyDown(e)
   }
 
   render () {
-    const { value, onValueChange } = this.props
+    const { value, isEditing, onValueChange } = this.props
 
-    const { isEditing } = this.state
     return isEditing ? (
       <AutofocusInput
         type='text'
         value={value}
         onChange={e => onValueChange && onValueChange(e.target.value)}
-        onBlur={this.toggleEdit}
+        onBlur={this.handleToggleEdit}
         onKeyDown={this.handleKeyDown}
       />
     ) : (
       <Monospace
-        onDoubleClick={this.toggleEdit}
+        onDoubleClick={this.handleToggleEdit}
       >
         <PlainText>{value}</PlainText>
       </Monospace>

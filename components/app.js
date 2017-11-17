@@ -83,6 +83,10 @@ export default class App extends React.Component<{
     this.setState({ componentMap })
   }
 
+  handleLinesChange = (lines: LineInfo[]) => {
+    this.setState({ lines })
+  }
+
   render () {
     const { componentMap, lines } = this.state
     const { preview } = this.computedState
@@ -94,6 +98,7 @@ export default class App extends React.Component<{
           componentMap={componentMap}
           lines={lines}
           onComponentChange={this.handleComponentChange}
+          onLinesChange={this.handleLinesChange}
         />
         <h2>Preview</h2>
         {preview}
