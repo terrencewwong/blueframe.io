@@ -37,30 +37,43 @@ export default class SourceEditor extends React.Component<{
     const { tag } = lines[currentLine]
 
     if (tag === 'string' || tag === 'self-closing') {
-      console.log('LOL you cant add a child to this component!')
+      /// 'LOL you cant add a child to this component!'
       return
     }
 
     const id = Date.now().toString()
 
-    if (tag === 'opening') {
-      const duplicated = [ ...lines ]
-      duplicated.splice(currentLine + 1, 0, {
+    const duplicated = [ ...lines ]
+    const spliceArguments = [
+      0, // This is a hack to make flow stop complaining
+      0,
+      {
         id,
         tag: 'opening'
-      }, {
+      },
+      {
         id,
         tag: 'closing'
-      })
+      }
+    ]
 
-      // TODO: should be element picker
-      this.handleComponentChange(id, {
-        name: 'Text',
-        props: []
-      })
-
-      this.handleLinesChange(duplicated)
+    if (tag === 'opening') {
+      spliceArguments[0] = currentLine + 1
+    } else if (tag === 'closing') {
+      spliceArguments[0] = currentLine
+    } else {
+      throw new Error(`Unrecognized tag: ${tag} for id: ${id}`)
     }
+
+    [].splice.apply(duplicated, spliceArguments)
+
+    // TODO: should be element picker
+    this.handleComponentChange(id, {
+      name: 'Text',
+      props: []
+    })
+
+    this.handleLinesChange(duplicated)
   }
 
   handleDeleteCurrentLine = () => {
