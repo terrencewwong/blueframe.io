@@ -38,4 +38,4 @@ export type ComponentMap = {
   [id: string]: Component | string
 }
 
-export type TagType = 'opening' | 'closing' | 'self-closing'
+export type TagType = 'opening' | 'closing' | 'self-closing' | 'string'

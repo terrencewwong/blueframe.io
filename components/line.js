@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import Monospace from './monospace'
 import type { Node } from 'react'
 
-const isCurrentLineStyles = ({ isCurrentLine, plainText }) => {
-  if (isCurrentLine) {
+const activeStyles = ({ active, plainText }) => {
+  if (active) {
     return `
       background-color: #3879d9;
 
@@ -27,16 +27,22 @@ const isCurrentLineStyles = ({ isCurrentLine, plainText }) => {
 }
 
 const Highlightable = styled.div`
-  ${isCurrentLineStyles}
+  ${activeStyles}
 
   outline: none;
 `
 
 class Line extends React.Component<{
-  isCurrentLine: boolean,
+  active: boolean,
   depth: number,
   children: Node
 }> {
+  // TODO: get rid of this shit
+  static defaultProps = {
+    active: false,
+    depth: 0
+  }
+
   render () {
     const {
       depth,

@@ -13,7 +13,7 @@ class ComponentEditor extends React.Component<{
   componentDefinitionMap: ComponentDefinitionMap,
   name: string,
   props: Prop[],
-  selfClosing: boolean,
+  selfClosing?: boolean,
   onComponentChange?: (component: Component) => void,
   onComponentDelete?: () => void,
   onComponentKeyDown?: (e: Event) => void

@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { storiesOf } from '@storybook/react'
-import SourceEditor from '../source-editor'
+import App from '../app'
 
 const componentMap = {
   'root': {
@@ -31,9 +31,9 @@ const lines = [
   }
 ]
 
-storiesOf('SourceEditor', module)
+storiesOf('App', module)
   .add('default', () =>
-    <SourceEditor
+    <App
       componentMap={componentMap}
       lines={lines}
     />
