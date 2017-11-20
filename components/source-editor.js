@@ -26,7 +26,7 @@ export default class SourceEditor extends React.Component<{
     currentEditingPropIndex: null
   }
 
-  handleAddChild = () => {
+  insertChild = (componentType: 'component' | 'string') => {
     const { lines } = this.props
     const { currentLine } = this.state
 
@@ -34,7 +34,7 @@ export default class SourceEditor extends React.Component<{
       throw new Error('Cannot add child when there is no current line!')
     }
 
-    const { tag } = lines[currentLine]
+    const { tag: tag } = lines[currentLine]
 
     if (tag === 'string' || tag === 'self-closing') {
       /// 'LOL you cant add a child to this component!'
@@ -44,18 +44,31 @@ export default class SourceEditor extends React.Component<{
     const id = Date.now().toString()
 
     const duplicated = [ ...lines ]
-    const spliceArguments = [
-      0, // This is a hack to make flow stop complaining
-      0,
-      {
-        id,
-        tag: 'opening'
-      },
-      {
-        id,
-        tag: 'closing'
-      }
-    ]
+
+    let spliceArguments
+    if (componentType === 'component') {
+      spliceArguments = [
+        0, // This is a hack to make flow stop complaining
+        0,
+        {
+          id,
+          tag: 'opening'
+        },
+        {
+          id,
+          tag: 'closing'
+        }
+      ]
+    } else {
+      spliceArguments = [
+        0, // This is a hack to make flow stop complaining
+        0,
+        {
+          id,
+          tag: 'string'
+        }
+      ]
+    }
 
     if (tag === 'opening') {
       spliceArguments[0] = currentLine + 1
@@ -67,13 +80,28 @@ export default class SourceEditor extends React.Component<{
 
     [].splice.apply(duplicated, spliceArguments)
 
-    // TODO: should be element picker
-    this.handleComponentChange(id, {
-      name: 'Text',
-      props: []
-    })
+    // TODO: omg this is terrible
+    if (componentType === 'component') {
+      // TODO: should be element picker
+      this.handleComponentChange(id, {
+        name: 'Text',
+        props: []
+      })
+    } else {
+      // TODO: should be a string in edit mode...
+      this.handleComponentChange(id, 'Hello, world!')
+    }
 
     this.handleLinesChange(duplicated)
+
+  }
+
+  handleAddChild = () => {
+    this.insertChild('component')
+  }
+
+  handleAddStringChild = () => {
+    this.insertChild('string')
   }
 
   handleDeleteCurrentLine = () => {
@@ -164,6 +192,8 @@ export default class SourceEditor extends React.Component<{
     }  else if (e.keyCode === ENTER) {
       // Start editing a prop
       this.setState({ currentEditingPropIndex: 0 })
+    } else if (e.shiftKey && e.keyCode === cKey) {
+      this.handleAddStringChild()
     } else if (e.keyCode === cKey) {
       this.handleAddChild()
     } else if (e.keyCode === DOWN) {
